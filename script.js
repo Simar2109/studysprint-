@@ -981,30 +981,100 @@ if (menuToggleBtn) menuToggleBtn.addEventListener("click", openSidebar);
 if (sidebarCloseBtn) sidebarCloseBtn.addEventListener("click", closeSidebar);
 if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", closeSidebar);
 
-// Close mobile sidebar on navigation link click
-document.querySelectorAll(".nav-link").forEach(link => {
-  link.addEventListener("click", () => {
-    closeSidebar();
-    document.querySelectorAll(".nav-link").forEach(l => l.classList.toggle("active", l === link));
-    const label = link.querySelector(".nav-label");
-    if (label) $("activeBreadcrumb").textContent = label.textContent;
+// --- Sidebar Navigation & Section Scrolling ---
+const navLinks = document.querySelectorAll(".nav-link");
+
+function setActiveNav(targetHref) {
+  navLinks.forEach(link => {
+    const isTarget = link.getAttribute("href") === targetHref;
+    link.classList.toggle("active", isTarget);
+    if (isTarget) {
+      const label = link.querySelector(".nav-label");
+      if (label && $("activeBreadcrumb")) {
+        $("activeBreadcrumb").textContent = label.textContent;
+      }
+    }
+  });
+}
+
+function navigateToSection(targetHref) {
+  closeSidebar();
+  setActiveNav(targetHref);
+
+  if (targetHref === "#overview") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (history.replaceState) history.replaceState(null, "", "#overview");
+  } else {
+    const targetElement = document.querySelector(targetHref);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (history.replaceState) history.replaceState(null, "", targetHref);
+    }
+  }
+}
+
+navLinks.forEach(link => {
+  link.addEventListener("click", (e) => {
+    const targetHref = link.getAttribute("href");
+    if (targetHref && targetHref.startsWith("#")) {
+      e.preventDefault();
+      navigateToSection(targetHref);
+    }
   });
 });
+
+// Brand Logo link to Overview
+const brandLink = document.querySelector(".brand");
+if (brandLink) {
+  brandLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigateToSection("#overview");
+  });
+}
+
+// Quick action buttons in hero
+const heroTaskBtn = document.querySelector('.welcome-quick-actions a[href="#tasks"]');
+if (heroTaskBtn) {
+  heroTaskBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigateToSection("#tasks");
+    setTimeout(() => {
+      const input = $("taskInput");
+      if (input) input.focus();
+    }, 300);
+  });
+}
+
+const heroFocusBtn = document.querySelector('.welcome-quick-actions a[href="#focus"]');
+if (heroFocusBtn) {
+  heroFocusBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    navigateToSection("#focus");
+  });
+}
+
+// Scrollspy: update active nav link as student scrolls through dashboard
+window.addEventListener("scroll", () => {
+  const scrollPos = window.scrollY;
+  const tasksElem = $("tasks");
+  const focusElem = $("focus");
+  const insightsElem = $("insights");
+
+  if (scrollPos < 180) {
+    setActiveNav("#overview");
+  } else if (focusElem && scrollPos >= focusElem.offsetTop - 140) {
+    setActiveNav("#focus");
+  } else if (tasksElem && scrollPos >= tasksElem.offsetTop - 140) {
+    setActiveNav("#tasks");
+  } else if (insightsElem && scrollPos >= insightsElem.offsetTop - 140) {
+    setActiveNav("#insights");
+  }
+}, { passive: true });
 
 // --- Initial Startup Execution ---
 const dueDateInput = $("dueDateInput");
 if (dueDateInput) {
   dueDateInput.min = getTodayDateString();
-}
-
-const quickTaskBtn = document.querySelector('a[href="#tasks"].quick-link-btn');
-if (quickTaskBtn) {
-  quickTaskBtn.addEventListener("click", () => {
-    setTimeout(() => {
-      const input = $("taskInput");
-      if (input) input.focus();
-    }, 150);
-  });
 }
 
 updateGreeting();
