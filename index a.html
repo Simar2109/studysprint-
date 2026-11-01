@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="StudySprint — A modern student productivity dashboard to plan tasks, focus with Pomodoro sprints, and celebrate daily progress.">
+  <meta name="theme-color" content="#7c5cfc">
+  <title>StudySprint — Make progress, one sprint at a time</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas Confetti Container -->
+  <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-shell">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a class="brand" href="#overview" aria-label="StudySprint home">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span class="brand-text">study<span class="brand-light">sprint</span></span>
+        </a>
+        <button class="icon-btn mobile-close-btn" id="sidebarCloseBtn" aria-label="Close navigation menu">✕</button>
+      </div>
+
+      <div class="side-label">WORKSPACE</div>
+      <nav class="nav" aria-label="Dashboard sections">
+        <a class="nav-link active" href="#overview" id="navOverview">
+          <span class="nav-icon" aria-hidden="true">▦</span>
+          <span class="nav-label">Overview</span>
+        </a>
+        <a class="nav-link" href="#tasks" id="navTasks">
+          <span class="nav-icon" aria-hidden="true">✓</span>
+          <span class="nav-label">My Tasks</span>
+          <span class="nav-badge" id="navPendingBadge">0</span>
+        </a>
+        <a class="nav-link" href="#focus" id="navFocus">
+          <span class="nav-icon" aria-hidden="true">◷</span>
+          <span class="nav-label">Focus Room</span>
+        </a>
+        <a class="nav-link" href="#insights" id="navInsights">
+          <span class="nav-icon" aria-hidden="true">📊</span>
+          <span class="nav-label">Statistics</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="tip-card" role="region" aria-label="Productivity Tip">
+          <div class="tip-top">
+            <span class="tip-icon" aria-hidden="true">✧</span>
+            <button class="tip-refresh-btn" id="newTipBtn" title="Get another tip" aria-label="Get another tip">↻</button>
+          </div>
+          <strong id="tipTitle">A little progress adds up.</strong>
+          <p id="tipBody">Choose one small task and begin. Momentum builds once you start.</p>
+        </div>
+
+        <div class="profile" id="profileCard" tabindex="0" role="button" aria-label="Student Profile — Click to edit your name">
+          <div class="avatar" id="avatarLetter" aria-hidden="true">S</div>
+          <div class="profile-meta">
+            <strong id="studentNameDisplay">Student Space</strong>
+            <small id="studentStatusSubtitle">Click to customize name</small>
+          </div>
+          <span class="profile-dots" aria-hidden="true">•••</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile Overlay Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="overview">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn menu-toggle-btn" id="menuToggleBtn" aria-label="Open navigation menu">
+            <span aria-hidden="true">☰</span>
+          </button>
+          <div class="breadcrumb" aria-label="Breadcrumb">
+            <span>Workspace</span>
+            <span class="separator" aria-hidden="true">/</span>
+            <strong id="activeBreadcrumb">Overview</strong>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <span class="today-pill" id="todayLabel">Today</span>
+          <button class="icon-btn" id="soundToggle" aria-label="Toggle sound feedback" title="Toggle audio chime">
+            <span id="soundIcon" aria-hidden="true">🔔</span>
+          </button>
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle colour theme" title="Toggle dark mode">
+            <span id="themeIcon" aria-hidden="true">◐</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Welcome Hero Section with Dynamic Greeting -->
+      <section class="welcome" aria-labelledby="welcomeHeading">
+        <div class="welcome-text">
+          <div class="eyebrow-pill">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span class="eyebrow" id="greetingTimePill">YOUR SPACE · YOUR PACE</span>
+          </div>
+          <h1 id="welcomeHeading">
+            <span id="dynamicGreeting">Make today</span> <span class="highlight">count.</span>
+          </h1>
+          <p class="welcome-copy" id="welcomeSubtext">
+            A clear plan frees up mental space for your best work. Let’s tackle your priorities one focused sprint at a time.
+          </p>
+          <div class="welcome-quick-actions">
+            <a href="#tasks" class="quick-link-btn primary">
+              <span>+ New Task</span>
+            </a>
+            <a href="#focus" class="quick-link-btn secondary">
+              <span>◷ Open Focus Timer</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="welcome-art" aria-hidden="true">
+          <div class="ambient-glow"></div>
+          <div class="art-badge card-one">
+            <span class="badge-spark">✦</span>
+            <div>
+              <strong>Deep Focus</strong>
+              <small id="heroTimerSnippet">25 min sprints</small>
+            </div>
+          </div>
+          <div class="art-badge card-two">
+            <span class="badge-icon">✓</span>
+            <div>
+              <strong id="heroTasksDoneSnippet">0 Done</strong>
+              <small>Today's wins</small>
+            </div>
+          </div>
+          <div class="art-geometric-shape"></div>
+        </div>
+      </section>
+
+      <!-- Key Productivity Statistics Cards -->
+      <section class="stats-grid" id="insights" aria-label="Daily progress summary">
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-title">Tasks completed</span>
+            <span class="stat-icon lavender" aria-hidden="true">✓</span>
+          </div>
+          <div class="stat-value-row">
+            <div class="stat-value" id="completedCount">0</div>
+            <span class="stat-trend positive" id="completionRateBadge">0% done</span>
+          </div>
+          <div class="stat-note" id="completedNote">You’re building momentum</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-title">Tasks to go</span>
+            <span class="stat-icon peach" aria-hidden="true">◎</span>
+          </div>
+          <div class="stat-value-row">
+            <div class="stat-value" id="remainingCount">0</div>
+            <span class="stat-badge-chip" id="highPriorityPendingChip">0 high priority</span>
+          </div>
+          <div class="stat-note" id="remainingNote">One at a time is perfect</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span class="stat-title">Focus logged today</span>
+            <span class="stat-icon sky" aria-hidden="true">◷</span>
+          </div>
+          <div class="stat-value-row">
+            <div class="stat-value" id="focusTimeCount">0m</div>
+            <span class="stat-trend neutral" id="focusSessionBadge">0 sessions</span>
+          </div>
+          <div class="stat-note" id="focusNote">25 min deep work sprints</div>
+        </article>
+
+        <article class="stat-card progress-stat">
+          <div class="stat-top">
+            <span class="stat-title">Daily progress</span>
+            <span class="stat-icon mint" aria-hidden="true">↗</span>
+          </div>
+          <div class="progress-line">
+            <strong id="progressPercent">0%</strong>
+            <span id="progressCaption">Let’s get started</span>
+          </div>
+          <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBarContainer">
+            <span id="progressBar"></span>
+          </div>
+        </article>
+      </section>
+
+      <!-- Main Content Grid: Tasks Panel & Focus Room Column -->
+      <section class="content-grid">
+        <!-- Tasks Management Panel -->
+        <article class="panel task-panel" id="tasks" aria-labelledby="tasksHeading">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">STAY ON TRACK</p>
+              <h2 id="tasksHeading">Today’s tasks</h2>
+            </div>
+            <div class="panel-actions">
+              <button class="text-button" id="clearDone" aria-label="Clear all completed tasks">
+                <span>Clear completed</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Add Task Form with Priority & Due Date -->
+          <form class="add-task" id="taskForm" aria-label="Add a new task">
+            <div class="input-row">
+              <label class="sr-only" for="taskInput">New task title</label>
+              <div class="task-input-wrapper">
+                <span class="input-adornment" aria-hidden="true">✎</span>
+                <input id="taskInput" maxlength="90" placeholder="Add a task, e.g. Revise calculus chapter 4…" required autocomplete="off">
+              </div>
+            </div>
+
+            <div class="add-task-controls">
+              <div class="control-group">
+                <label class="control-label" for="priorityInput">Priority:</label>
+                <div class="select-wrapper">
+                  <select id="priorityInput" aria-label="Task priority">
+                    <option value="Normal">Normal</option>
+                    <option value="High">High ✦</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="dueDateInput">Due Date:</label>
+                <div class="date-input-wrapper">
+                  <input type="date" id="dueDateInput" aria-label="Task due date">
+                  <button type="button" class="date-quick-btn" id="setTodayBtn" title="Set to Today">Today</button>
+                  <button type="button" class="date-quick-btn" id="setTomorrowBtn" title="Set to Tomorrow">Tomorrow</button>
+                </div>
+              </div>
+
+              <button class="add-btn" type="submit" id="addTaskSubmitBtn">
+                <span>+ Add task</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Search & Filter Controls -->
+          <div class="filter-and-search-row">
+            <div class="search-box">
+              <span class="search-icon" aria-hidden="true">🔍</span>
+              <input type="search" id="taskSearchInput" placeholder="Search tasks... (Press '/' to focus)" aria-label="Search your tasks">
+              <button type="button" class="search-clear-btn" id="searchClearBtn" aria-label="Clear search query" style="display: none;">×</button>
+            </div>
+
+            <div class="filter-row">
+              <div class="filters" role="group" aria-label="Filter tasks by status">
+                <button type="button" class="filter active" data-filter="all">
+                  All <span class="filter-count" id="countAll">0</span>
+                </button>
+                <button type="button" class="filter" data-filter="active">
+                  In progress <span class="filter-count" id="countActive">0</span>
+                </button>
+                <button type="button" class="filter" data-filter="done">
+                  Completed <span class="filter-count" id="countDone">0</span>
+                </button>
+              </div>
+              <span class="task-total" id="taskTotal">0 tasks</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Task List -->
+          <ul class="task-list" id="taskList" aria-live="polite" aria-label="Task list items"></ul>
+
+          <!-- Enhanced Contextual Empty State -->
+          <div class="empty-state" id="emptyState">
+            <div class="empty-symbol" id="emptyIcon" aria-hidden="true">✧</div>
+            <strong id="emptyTitle">Your list is clear.</strong>
+            <p id="emptyDescription">Add a task above and take your first step toward today’s goals.</p>
+            <button type="button" class="empty-action-btn" id="emptyActionBtn" style="display: none;">Reset search</button>
+          </div>
+        </article>
+
+        <!-- Right Column: Focus Room & Mindset Card -->
+        <aside class="right-column">
+          <!-- 25-Minute Focus Room Panel -->
+          <article class="panel focus-panel" id="focus" aria-labelledby="focusHeading">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">FOCUS ROOM</p>
+                <h2 id="focusHeading">One thing at a time.</h2>
+              </div>
+              <span class="focus-spark" aria-hidden="true">✦</span>
+            </div>
+
+            <p class="focus-copy">
+              Give one activity your uninterrupted attention. Work in a 25-minute sprint, then take a short break to recharge.
+            </p>
+
+            <!-- Focus Mode Selectors -->
+            <div class="timer-mode-selector" role="group" aria-label="Timer mode selection">
+              <button type="button" class="mode-chip active" id="modePomodoro" data-minutes="25">25m Sprint</button>
+              <button type="button" class="mode-chip" id="modeShortBreak" data-minutes="5">5m Break</button>
+              <button type="button" class="mode-chip" id="modeLongBreak" data-minutes="15">15m Rest</button>
+            </div>
+
+            <!-- SVG Animated Timer Ring -->
+            <div class="timer-wrapper">
+              <div class="timer-ring-container">
+                <svg class="timer-svg" viewBox="0 0 160 160" aria-hidden="true">
+                  <circle class="timer-circle-bg" cx="80" cy="80" r="70"></circle>
+                  <circle class="timer-circle-progress" id="timerSvgProgress" cx="80" cy="80" r="70"></circle>
+                </svg>
+                <div class="timer-ring" aria-hidden="true"></div>
+                <div class="timer-inner">
+                  <strong id="timerDisplay">25:00</strong>
+                  <small id="timerModeLabel">FOCUS SPRINT</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Timer Controls -->
+            <div class="timer-controls">
+              <button class="timer-primary" id="timerStart" aria-label="Start or pause timer">Start focus</button>
+              <button class="timer-secondary" id="timerReset" aria-label="Reset timer to beginning">Reset</button>
+            </div>
+
+            <div class="session-note" id="timerStatus" role="status">A fresh 25-minute session is ready.</div>
+
+            <!-- Focus Stats Footer inside panel -->
+            <div class="focus-panel-footer">
+              <div class="mini-stat">
+                <span class="mini-stat-label">Today's Sprints:</span>
+                <strong id="panelSprintsCount">0</strong>
+              </div>
+              <span class="footer-divider" aria-hidden="true">•</span>
+              <div class="mini-stat">
+                <span class="mini-stat-label">Focus Total:</span>
+                <strong id="panelFocusMinutes">0 mins</strong>
+              </div>
+            </div>
+          </article>
+
+          <!-- Daily Mindset Quote Card -->
+          <article class="quote-card" aria-label="Daily inspirational quote">
+            <div class="quote-header">
+              <div class="quote-mark" aria-hidden="true">“</div>
+              <span class="quote-tag">DAILY REMINDER</span>
+            </div>
+            <p id="quoteText">Small steps repeated every single day lead to remarkable changes.</p>
+            <div class="quote-footer">
+              <span class="quote-author" id="quoteAuthor">— StudySprint Mindset</span>
+              <button type="button" class="quote-refresh-btn" id="refreshQuoteBtn" title="Next quote" aria-label="Get another inspirational quote">↻</button>
+            </div>
+          </article>
+        </aside>
+      </section>
+
+      <!-- App Footer -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <span>Made for steady student progress ✦ <strong>StudySprint</strong></span>
+          <span class="footer-dot" aria-hidden="true">•</span>
+          <span>College Web Design Challenge Edition</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Name Edit Modal -->
+  <div class="modal-backdrop" id="nameModalBackdrop" style="display: none;" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Personalize Your Space</h3>
+      <p>Enter your first name to customize your StudySprint dashboard:</p>
+      <form id="nameForm">
+        <label class="sr-only" for="nameInput">Your Name</label>
+        <input type="text" id="nameInput" maxlength="25" placeholder="e.g. Alex" required autocomplete="name">
+        <div class="modal-buttons">
+          <button type="button" class="btn-cancel" id="cancelNameBtn">Cancel</button>
+          <button type="submit" class="btn-save">Save Name</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
