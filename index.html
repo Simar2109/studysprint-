@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="StudySprint helps students plan tasks, focus, and track small wins.">
+  <title>StudySprint — Make progress, one sprint at a time</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="StudySprint home"><span class="brand-mark">✦</span><span>study<span class="brand-light">sprint</span></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="nav">
+        <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
+        <a class="nav-link" href="#tasks"><span>✓</span> My tasks</a>
+        <a class="nav-link" href="#focus"><span>◷</span> Focus room</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="tip-card">
+          <div class="tip-icon">✧</div>
+          <strong>A little progress adds up.</strong>
+          <p>Choose one small thing and begin. You’ve got this.</p>
+        </div>
+        <div class="profile">
+          <div class="avatar">S</div>
+          <div><strong>Student space</strong><small>Your personal dashboard</small></div>
+          <span class="profile-dots">•••</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <div class="breadcrumb">Workspace <span>/</span> Overview</div>
+        <div class="top-actions"><span class="today-pill" id="todayLabel">Today</span><button class="icon-btn" id="themeToggle" aria-label="Toggle colour theme">◐</button></div>
+      </header>
+
+      <section class="welcome">
+        <div>
+          <p class="eyebrow">YOUR SPACE. YOUR PACE.</p>
+          <h1>Make today <span>count.</span></h1>
+          <p class="welcome-copy">A clear plan makes room for your best work. Let’s take it one step at a time.</p>
+        </div>
+        <div class="welcome-art" aria-hidden="true"><div class="sun"></div><div class="art-card card-one">✦<br><small>keep going</small></div><div class="art-card card-two">↗</div><div class="art-plant">〰</div></div>
+      </section>
+
+      <section class="stats-grid" aria-label="Your progress">
+        <article class="stat-card"><div class="stat-top"><span>Tasks completed</span><span class="stat-icon lavender">✓</span></div><div class="stat-value" id="completedCount">0</div><div class="stat-note">You’re building momentum</div></article>
+        <article class="stat-card"><div class="stat-top"><span>Tasks to go</span><span class="stat-icon peach">◎</span></div><div class="stat-value" id="remainingCount">0</div><div class="stat-note">One at a time is perfect</div></article>
+        <article class="stat-card progress-stat"><div class="stat-top"><span>Daily progress</span><span class="stat-icon mint">↗</span></div><div class="progress-line"><strong id="progressPercent">0%</strong><span id="progressCaption">Let’s get started</span></div><div class="bar"><span id="progressBar"></span></div></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel task-panel" id="tasks">
+          <div class="panel-heading"><div><p class="eyebrow">STAY ON TRACK</p><h2>Today’s tasks</h2></div><button class="text-button" id="clearDone">Clear completed</button></div>
+          <form class="add-task" id="taskForm"><label class="sr-only" for="taskInput">New task</label><input id="taskInput" maxlength="90" placeholder="Add a task, e.g. Revise calculus…" required><select id="priorityInput" aria-label="Task priority"><option value="Normal">Normal</option><option value="High">High</option><option value="Low">Low</option></select><button class="add-btn" type="submit">+ Add task</button></form>
+          <div class="filter-row"><div class="filters" role="group" aria-label="Filter tasks"><button class="filter active" data-filter="all">All</button><button class="filter" data-filter="active">In progress</button><button class="filter" data-filter="done">Completed</button></div><span class="task-total" id="taskTotal">0 tasks</span></div>
+          <ul class="task-list" id="taskList" aria-live="polite"></ul>
+          <div class="empty-state" id="emptyState"><div class="empty-symbol">✧</div><strong>Your list is clear.</strong><p>Add a task above and make your first move.</p></div>
+        </article>
+
+        <aside class="right-column">
+          <article class="panel focus-panel" id="focus">
+            <div class="panel-heading"><div><p class="eyebrow">FOCUS ROOM</p><h2>One thing at a time.</h2></div><span class="focus-spark">✦</span></div>
+            <p class="focus-copy">Give one task your full attention. Take a short break when you’re done.</p>
+            <div class="timer-ring"><div class="timer-inner"><strong id="timerDisplay">25:00</strong><small>MINUTES</small></div></div>
+            <div class="timer-controls"><button class="timer-primary" id="timerStart">Start focus</button><button class="timer-secondary" id="timerReset">Reset</button></div>
+            <div class="session-note" id="timerStatus">A fresh 25-minute session is ready.</div>
+          </article>
+          <article class="quote-card"><div class="quote-mark">“</div><p>Small steps every day lead to big changes.</p><span>YOUR DAILY REMINDER</span></article>
+        </aside>
+      </section>
+      <footer>Made for steady progress <span>✦</span> StudySprint</footer>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
